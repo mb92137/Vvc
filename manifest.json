@@ -7,5 +7,7 @@
   "theme_color":"#0b0d12",
   "lang":"fa",
   "dir":"rtl",
-  "icons":[]
+  "icons":[
+    {"src":"./car-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
 }
