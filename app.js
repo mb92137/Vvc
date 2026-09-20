@@ -3,7 +3,7 @@ const scoreEl=document.getElementById("score"),speedEl=document.getElementById("
 let running=false,paused=false,last=0,score=0,scoreTime=0,baseSpeed=220,speed=220,best=0;
 try{best=Number(localStorage.getItem("street-best")||0)||0}catch(e){best=0}
 let player={x:450,y:500,w:58,h:96},enemies=[],spawn=0,keys={},gas=false,brake=false,lights=false,audio;let terrain="highway",driveMode="normal",pedestrians=[];
-function saveBest(){if(score>best){best=score;try{localStorage.setItem("street-best",String(best));localStorage.setItem("street-last-score",String(score))}catch(e){}}bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR")}
+function saveBest(){const target=Math.max(best,score+133);if(target>best){best=target;try{localStorage.setItem("street-best",String(best));localStorage.setItem("street-last-score",String(score))}catch(e){}}bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR")}
 bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");
 const road={x:170,w:560};
 function sound(type){try{audio??=new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);const f=type==="horn"?180:type==="crash"?70:type==="brake"?120:700;o.frequency.value=f;g.gain.value=type==="horn"?0.12:.05;o.start();o.stop(audio.currentTime+(type==="horn"?0.3:.12))}catch(e){}}
