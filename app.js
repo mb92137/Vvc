@@ -4,7 +4,8 @@ let running=false,paused=false,last=0,score=0,baseSpeed=220,speed=220,best=Numbe
 let player={x:450,y:500,w:58,h:96},enemies=[],spawn=0,keys={},gas=false,brake=false,lights=false,audio;let terrain="highway",driveMode="normal",pedestrians=[];
 bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");
 const road={x:170,w:560};
-function sound(type){try{audio??=new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=type==="horn"?180:type==="crash"?70:700;g.gain.value=.05;o.start();o.stop(audio.currentTime+.12)}catch(e){}}
+function sound(type){try{audio??=new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);const f=type==="horn"?180:type==="crash"?70:type==="brake"?120:700;o.frequency.value=f;g.gain.value=type==="horn"?0.12:.05;o.start();o.stop(audio.currentTime+(type==="horn"?0.3:.12))}catch(e){}}
+function engineSound(){if(!audio)return;try{const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.type="sawtooth";o.frequency.value=70+speed*.55;g.gain.value=.018;o.start();o.stop(audio.currentTime+.07)}catch(e){}}
 function reset(){pedestrians=[];score=0;baseSpeed=220;speed=220;level=1;enemies=[];spawn=0;player.x=450;paused=false;gas=false;brake=false;updateUI()}
 function start(){reset();running=true;msg.style.display="none";sound("start");last=performance.now();requestAnimationFrame(loop)}
 function gameOver(){running=false;sound("crash");if(score>best){best=score;localStorage.setItem("street-best",best)}bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");msg.querySelector("h1").textContent="💥 بازی تمام شد";msg.querySelector("p").textContent="امتیاز شما: "+score.toLocaleString("fa-IR");msg.style.display="block"}
@@ -30,7 +31,7 @@ function drawPedestrian(p){ctx.save();ctx.translate(p.x,p.y);ctx.fillStyle=p.c;c
 function drawMap(){mctx.fillStyle="#245025";mctx.fillRect(0,0,120,160);mctx.fillStyle="#555";mctx.fillRect(25,0,70,160);mctx.fillStyle="#ddd";for(let y=5;y<160;y+=20)mctx.fillRect(58,y,4,10);mctx.fillStyle="#e33";mctx.fillRect(55,140,10,14);enemies.forEach(e=>{mctx.fillStyle="#f6a";mctx.fillRect(55,Math.max(2,Math.min(150,e.y/4)),10,7)})}
 function updateUI(){scoreEl.textContent="امتیاز: "+score.toLocaleString("fa-IR");speedEl.textContent="سرعت: "+Math.max(0,Math.round(speed/10))+" km/h";levelEl.textContent="مرحله: "+level.toLocaleString("fa-IR");gearEl.textContent="دنده: "+(brake?"R":gas?"D":"N");document.getElementById("lightsState").textContent=lights?"💡 چراغ روشن":"💡 خاموش"}
 function loop(t){if(!running)return;requestAnimationFrame(loop);if(paused){last=t;return}const dt=Math.min((t-last)/1000,.04);last=t;
-const target=baseSpeed+(driveMode==="shoti"?45:0)+(gas?150:0)-(brake?170:0);speed+=(target-speed)*dt*4;if(speed<0)speed=0;
+engineSound();const target=baseSpeed+(driveMode==="shoti"?45:0)+(gas?150:0)-(brake?170:0);speed+=(target-speed)*dt*4;if(speed<0)speed=0;
 spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.35,1.05-score/1000)}if(terrain==="city"&&pedestrians.length<10&&Math.random()<dt*1.5)spawnPedestrian();
 const steer=(keys.ArrowLeft||keys.a?-1:0)+(keys.ArrowRight||keys.d?1:0);player.x+=steer*420*dt;player.x=Math.max(road.x+40,Math.min(road.x+road.w-40,player.x));
 enemies.forEach(e=>e.y+=speed*dt);enemies=enemies.filter(e=>e.y<680);pedestrians.forEach(p=>{p.x+=p.dir*p.s*dt;if(p.x<road.x-70)p.dir=1;if(p.x>road.x+road.w+70)p.dir=-1;p.y+=Math.sin((t+p.x)*.01)*.03});pedestrians=pedestrians.filter(p=>p.x>-80&&p.x<980);for(const e of enemies)if(collide(player,e)){gameOver();return}
@@ -38,7 +39,7 @@ score+=Math.floor(dt*(speed/25));if(Math.floor(score)%50===0&&score>0){document.
 document.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key===" "&&running)paused=!paused;if(e.key.toLowerCase()==="h")horn()});
 document.addEventListener("keyup",e=>keys[e.key]=false);
 function hold(id,setter){const b=document.getElementById(id);["pointerdown","touchstart"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(true)}));["pointerup","pointercancel","pointerleave","touchend"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(false)}))}
-hold("gas",v=>{gas=v;updateUI()});hold("brake",v=>{brake=v;updateUI()});
+hold("gas",v=>{gas=v;updateUI()});hold("brake",v=>{brake=v;if(v)sound("brake");updateUI()});
 function horn(){sound("horn");document.getElementById("hornState").textContent="📯 بوق!";setTimeout(()=>document.getElementById("hornState").textContent="",500)}
 document.getElementById("horn").onclick=horn;document.getElementById("lights").onclick=()=>{lights=!lights;updateUI()};
 document.querySelectorAll(".steering button").forEach(b=>{b.addEventListener("pointerdown",()=>keys[b.dataset.key]=true);b.addEventListener("pointerup",()=>keys[b.dataset.key]=false);b.addEventListener("pointerleave",()=>keys[b.dataset.key]=false)});
