@@ -3,7 +3,7 @@ const scoreEl=document.getElementById("score"),speedEl=document.getElementById("
 let running=false,paused=false,last=0,score=0,scoreTime=0,baseSpeed=220,speed=220,best=0;
 try{best=Number(localStorage.getItem("street-best")||0)||0}catch(e){best=0}
 let player={x:450,y:500,w:58,h:96},enemies=[],spawn=0,keys={},gas=false,brake=false,lights=false,audio;let terrain="highway",driveMode="normal",pedestrians=[];
-function saveBest(){const target=Math.max(best,score*2);if(target>best){best=target;try{localStorage.setItem("street-best",String(best));localStorage.setItem("street-last-score",String(score))}catch(e){}}bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR")}
+function saveBest(){const target=score*2;if(target>best){best=target;try{localStorage.setItem("street-best",String(best));localStorage.setItem("street-last-score",String(score))}catch(e){}}bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR")}
 bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");
 const road={x:170,w:560};
 function sound(type){try{audio??=new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);const f=type==="horn"?180:type==="crash"?70:type==="brake"?120:700;o.frequency.value=f;g.gain.value=type==="horn"?0.12:.05;o.start();o.stop(audio.currentTime+(type==="horn"?0.3:.12))}catch(e){}}
@@ -23,7 +23,6 @@ function updateUI(){scoreEl.textContent="امتیاز: "+score.toLocaleString("f
 function loop(t){if(!running)return;requestAnimationFrame(loop);if(paused){last=t;return}const dt=Math.min((t-last)/1000,.04);last=t;engineSound();const target=baseSpeed+(driveMode==="shoti"?45:0)+(gas?150:0)-(brake?170:0);speed+=(target-speed)*dt*4;if(speed<0)speed=0;spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.35,1.05-score/1000)}if(terrain==="city"&&pedestrians.length<10&&Math.random()<dt*1.5)spawnPedestrian();const steer=(keys.ArrowLeft||keys.a?-1:0)+(keys.ArrowRight||keys.d?1:0);player.x+=steer*420*dt;player.x=Math.max(road.x+40,Math.min(road.x+road.w-40,player.x));enemies.forEach(e=>e.y+=speed*dt);enemies=enemies.filter(e=>e.y<680);pedestrians.forEach(p=>{p.x+=p.dir*p.s*dt;if(p.x<road.x-70)p.dir=1;if(p.x>road.x+road.w+70)p.dir=-1;p.y+=Math.sin((t+p.x)*.01)*.03});pedestrians=pedestrians.filter(p=>p.x>-80&&p.x<980);for(const e of enemies)if(collide(player,e)){gameOver();return}
   scoreTime+=dt;
   if(scoreTime>=1){const whole=Math.floor(scoreTime);score+=whole;scoreTime-=whole;saveBest();updateUI()}
-  if(score>best)saveBest();
   if(score>0&&score%50===0){document.getElementById("levelToast").textContent="🏁 رکورد جدید!";document.getElementById("levelToast").classList.add("show");setTimeout(()=>document.getElementById("levelToast").classList.remove("show"),500)}
   baseSpeed=220;updateUI();drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
 document.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key===" "&&running)paused=!paused;if(e.key.toLowerCase()==="h")horn()});
