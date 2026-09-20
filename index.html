@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>خوابینو | فروشگاه کالای خواب</title>
+<style>
+:root{--ink:#253443;--muted:#6b7785;--bg:#f7f5f1;--card:#fff;--accent:#c78f63;--line:#e8e3db}
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink)}a{text-decoration:none;color:inherit}
+.container{max-width:1180px;margin:auto;padding:0 18px}.top{background:#22313f;color:#fff;text-align:center;padding:9px;font-size:13px}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}.logo{font-size:25px;font-weight:800}.logo span{color:var(--accent)}
+nav{display:flex;gap:22px;font-size:14px}.actions{display:flex;gap:10px}.btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}.cart{background:var(--ink);color:#fff;border:none}
+.hero{padding:38px 0}.hero-box{background:linear-gradient(135deg,#e9dfd2,#f9f6f0);border-radius:24px;padding:42px;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:center}.hero h1{font-size:42px;margin:0 0 14px}.hero p{color:var(--muted);line-height:2}.hero .cta{display:inline-block;margin-top:10px;background:var(--accent);color:#fff;padding:13px 20px;border-radius:12px}.hero-art{font-size:110px;text-align:center}
+.section{padding:20px 0 40px}.section h2{font-size:24px;margin:0 0 20px}.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.cat,.product{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}.cat{padding:22px}.cat b{display:block;margin-bottom:8px}.cat span{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}.search{flex:1;max-width:360px}.search input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.products{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.pic{height:190px;background:#eee7df;display:flex;align-items:center;justify-content:center;font-size:72px}.info{padding:15px}.name{font-weight:700;margin-bottom:8px}.meta{color:var(--muted);font-size:12px}.price{margin-top:12px;font-weight:800}.buy{margin-top:12px;width:100%;padding:10px;border:0;border-radius:10px;background:var(--ink);color:#fff;cursor:pointer}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}.feature b{display:block;margin:7px 0}
+footer{background:#22313f;color:#fff;margin-top:20px}.foot{padding:30px 0;display:grid;grid-template-columns:2fr 1fr 1fr;gap:20px}.muted{color:#c9d0d6;font-size:13px;line-height:2}
+@media(max-width:900px){.hero-box{grid-template-columns:1fr}.cats,.products{grid-template-columns:repeat(2,1fr)}nav{display:none}.features{grid-template-columns:1fr}.foot{grid-template-columns:1fr 1fr}.hero h1{font-size:32px}}
+@media(max-width:560px){.cats,.products{grid-template-columns:1fr}.hero-box{padding:28px 20px}.hero-art{font-size:80px}.foot{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="top">ارسال رایگان سفارش‌های بالای ۲ میلیون تومان | ضمانت اصالت کالا</div>
+<header><div class="container nav">
+<a class="logo" href="#">خواب<span>ینو</span></a>
+<nav><a href="#products">محصولات</a><a href="#cats">دسته‌بندی‌ها</a><a href="#features">مزایای خرید</a><a href="#contact">تماس با ما</a></nav>
+<div class="actions"><button class="btn" onclick="focusSearch()">🔎</button><button class="btn cart" onclick="showCart()">🛒 سبد خرید (<span id="count">0</span>)</button></div>
+</div></header>
+<main>
+<section class="hero"><div class="container"><div class="hero-box">
+<div><h1>آرامش از یک خواب خوب شروع می‌شود</h1><p>تازه‌ترین کالای خواب با طراحی زیبا و انتخابی راحت برای اتاق خواب شما؛ از تشک و بالش تا روتختی و ملحفه.</p><a class="cta" href="#products">مشاهده محصولات</a></div>
+<div class="hero-art">🛏️</div>
+</div></div></section>
+<section class="section" id="cats"><div class="container"><h2>دسته‌بندی‌ها</h2><div class="cats">
+<div class="cat"><b>🛏️ تشک</b><span>طبی و فنری برای خواب راحت</span></div>
+<div class="cat"><b>🧸 بالش</b><span>بالش‌های نرم و طبی</span></div>
+<div class="cat"><b>🛌 روتختی</b><span>ست‌های شیک دو نفره و یک نفره</span></div>
+<div class="cat"><b>🧺 ملحفه و پتو</b><span>لطیف، بادوام و مناسب هر فصل</span></div>
+</div></div></section>
+<section class="section" id="products"><div class="container">
+<div class="toolbar"><h2>محصولات پرفروش</h2><div class="search"><input id="search" oninput="render()" placeholder="جست‌وجوی محصول..."></div></div>
+<div class="products" id="grid"></div>
+</div></section>
+<section class="section" id="features"><div class="container"><h2>چرا خوابینو؟</h2><div class="features">
+<div class="feature">🚚<b>ارسال سریع</b><span class="muted">ارسال سفارش‌ها به سراسر کشور</span></div>
+<div class="feature">✅<b>تضمین کیفیت</b><span class="muted">انتخاب کالاهای باکیفیت و قابل اعتماد</span></div>
+<div class="feature">💬<b>پشتیبانی</b><span class="muted">همراه شما قبل و بعد از خرید</span></div>
+</div></div></section>
+</main>
+<footer id="contact"><div class="container foot"><div><h3>خوابینو</h3><div class="muted">فروشگاه تخصصی کالای خواب برای ساختن خوابی آرام‌تر.</div></div><div><h4>دسترسی سریع</h4><div class="muted">محصولات<br>دسته‌بندی‌ها<br>قوانین خرید</div></div><div><h4>تماس</h4><div class="muted">شنبه تا پنجشنبه<br>۰۹۱۲۱۲۳۴۵۶۷<br>support@example.com</div></div></div></footer>
+<script>
+const products=[
+{name:'تشک طبی آریا',cat:'تشک',price:12900000,emoji:'🛏️'},
+{name:'بالش مموری فوم',cat:'بالش',price:890000,emoji:'🧸'},
+{name:'روتختی هتلی دو نفره',cat:'روتختی',price:2190000,emoji:'🛌'},
+{name:'پتوی چهار فصل',cat:'پتو',price:1690000,emoji:'🧣'},
+{name:'محافظ تشک ضدآب',cat:'محافظ',price:590000,emoji:'🧺'},
+{name:'ست ملحفه کتان',cat:'ملحفه',price:1490000,emoji:'🧵'},
+{name:'بالش طبی گردنی',cat:'بالش',price:720000,emoji:'💤'},
+{name:'تشک فنری کلاسیک',cat:'تشک',price:9900000,emoji:'🛏️'}
+];
+let cart=0;
+const money=n=>n.toLocaleString('fa-IR')+' تومان';
+function render(){const q=document.getElementById('search').value.trim();const xs=products.filter(p=>(p.name+p.cat).includes(q));document.getElementById('grid').innerHTML=xs.map(p=>'<article class="product"><div class="pic">'+p.emoji+'</div><div class="info"><div class="name">'+p.name+'</div><div class="meta">'+p.cat+'</div><div class="price">'+money(p.price)+'</div><button class="buy" onclick="add()">افزودن به سبد</button></div></article>').join('')}
+function add(){cart++;document.getElementById('count').textContent=cart;alert('محصول به سبد خرید اضافه شد.')}
+function showCart(){alert(cart?'سبد خرید شما '+cart+' کالا دارد.':'سبد خرید خالی است.')}
+function focusSearch(){document.getElementById('search').focus();document.getElementById('products').scrollIntoView({behavior:'smooth'})}
+render();
+</script>
+</body></html>
