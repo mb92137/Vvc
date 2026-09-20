@@ -13,7 +13,7 @@ function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",h
 function drawCar(c,x,y,w,h,isPlayer=false){
   ctx.save();ctx.translate(x,y);
   // نمای کارتونی و غیرواقعی از پژو 405
-  ctx.fillStyle=isPlayer?"#f0f0f0":c;rect(-w/2,-h/2,w,h,8);
+  ctx.fillStyle=isPlayer?"#15171a":c;rect(-w/2,-h/2,w,h,8);
   ctx.fillStyle="#20252b";rect(-w*.36,-h*.27,w*.72,h*.24,5);
   ctx.fillStyle="#20252b";rect(-w*.34,h*.04,w*.68,h*.20,5);
   ctx.fillStyle="#bfc6cc";ctx.fillRect(-w*.40,-h*.02,w*.80,4);
