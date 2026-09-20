@@ -1,7 +1,7 @@
 const canvas=document.getElementById("game"),ctx=canvas.getContext("2d"),map=document.getElementById("map"),mctx=map.getContext("2d");
 const scoreEl=document.getElementById("score"),speedEl=document.getElementById("speed"),bestEl=document.getElementById("best"),levelEl=document.getElementById("level"),gearEl=document.getElementById("gear"),msg=document.getElementById("message");
 let running=false,paused=false,last=0,score=0,baseSpeed=220,speed=220,best=Number(localStorage.getItem("street-best")||0),level=1;
-let player={x:450,y:500,w:54,h:92},enemies=[],spawn=0,keys={},gas=false,brake=false,lights=false,audio;let terrain="highway",driveMode="normal";
+let player={x:450,y:500,w:58,h:96},enemies=[],spawn=0,keys={},gas=false,brake=false,lights=false,audio;let terrain="highway",driveMode="normal";
 bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");
 const road={x:170,w:560};
 function sound(type){try{audio??=new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.frequency.value=type==="horn"?180:type==="crash"?70:700;g.gain.value=.05;o.start();o.stop(audio.currentTime+.12)}catch(e){}}
@@ -13,12 +13,12 @@ function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",h
 function drawCar(c,x,y,w,h,isPlayer=false){ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=12;if(isPlayer&&driveMode==="low"){h*=.86;w*=1.03;}
   ctx.save();ctx.translate(x,y);
   // نمای کارتونی و غیرواقعی از پژو 405
-  ctx.fillStyle=isPlayer?"#15171a":c;rect(-w/2,-h/2,w,h,8);
-  ctx.fillStyle="#20252b";rect(-w*.36,-h*.27,w*.72,h*.24,5);
+  ctx.fillStyle=isPlayer?"#090b0e":c;rect(-w/2,-h/2,w,h,10);ctx.fillStyle="#11151a";rect(-w*.44,-h*.49,w*.88,h*.08,5);
+  ctx.fillStyle="#18232c";rect(-w*.36,-h*.27,w*.72,h*.24,6);ctx.fillStyle="#253542";rect(-w*.31,-h*.23,w*.27,h*.16,4);ctx.fillStyle="#253542";rect(w*.04,-h*.23,w*.27,h*.16,4);
   ctx.fillStyle="#20252b";rect(-w*.34,h*.04,w*.68,h*.20,5);
-  ctx.fillStyle="#bfc6cc";ctx.fillRect(-w*.40,-h*.02,w*.80,4);
+  ctx.fillStyle="#bfc6cc";ctx.fillRect(-w*.40,-h*.02,w*.80,3);ctx.fillStyle="#777";ctx.fillRect(-w*.30,h*.30,w*.60,3);
   ctx.fillStyle="#111";ctx.fillRect(-w/2-4,-h*.25,7,22);ctx.fillRect(w/2-3,-h*.25,7,22);ctx.fillRect(-w/2-4,h*.16,7,22);ctx.fillRect(w/2-3,h*.16,7,22);
-  ctx.fillStyle=lights&&isPlayer?"#fff":"#ddd";ctx.fillRect(-w*.39,-h*.43,10,7);ctx.fillRect(w*.25,-h*.43,10,7);
+  ctx.fillStyle=lights&&isPlayer?"#fff":"#ddd";ctx.shadowColor=lights&&isPlayer?"#fff":"transparent";ctx.shadowBlur=lights&&isPlayer?18:0;ctx.fillRect(-w*.39,-h*.43,10,7);ctx.fillRect(w*.25,-h*.43,10,7);ctx.shadowBlur=0;
   ctx.fillStyle=isPlayer?"#d22":"#a22";ctx.fillRect(-w*.39,h*.38,10,7);ctx.fillRect(w*.25,h*.38,10,7);
   ctx.fillStyle="#333";ctx.fillRect(-w*.28,h*.27,w*.56,5);
   ctx.restore();ctx.shadowBlur=0;
@@ -32,7 +32,7 @@ const target=baseSpeed+(driveMode==="shoti"?45:0)+(gas?150:0)-(brake?170:0);spee
 spawn-=dt;if(spawn<=0){spawnEnemy();spawn=Math.max(.35,1.05-score/1000)}
 const steer=(keys.ArrowLeft||keys.a?-1:0)+(keys.ArrowRight||keys.d?1:0);player.x+=steer*420*dt;player.x=Math.max(road.x+40,Math.min(road.x+road.w-40,player.x));
 enemies.forEach(e=>e.y+=speed*dt);enemies=enemies.filter(e=>e.y<680);for(const e of enemies)if(collide(player,e)){gameOver();return}
-score+=Math.floor(dt*(speed/25));level=Math.floor(score/100)+1;baseSpeed=220+(level-1)*22;updateUI();drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));drawMap()}
+score+=Math.floor(dt*(speed/25));if(Math.floor(score)%50===0&&score>0){document.getElementById("levelToast").textContent="🏁 رکورد مرحله‌ای!";document.getElementById("levelToast").classList.add("show");setTimeout(()=>document.getElementById("levelToast").classList.remove("show"),500)}level=Math.floor(score/100)+1;baseSpeed=220+(level-1)*22;updateUI();drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));drawMap()}
 document.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key===" "&&running)paused=!paused;if(e.key.toLowerCase()==="h")horn()});
 document.addEventListener("keyup",e=>keys[e.key]=false);
 function hold(id,setter){const b=document.getElementById(id);["pointerdown","touchstart"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(true)}));["pointerup","pointercancel","pointerleave","touchend"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(false)}))}
