@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:theme="@style/AppTheme" android:label="بتاز" android:usesCleartextTraffic="true">
+    <application android:theme="@style/AppTheme" android:label="بتاز" android:icon="@drawable/ic_car" android:roundIcon="@drawable/ic_car" android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
