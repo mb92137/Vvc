@@ -9,8 +9,8 @@ function reset(){score=0;baseSpeed=220;speed=220;level=1;enemies=[];spawn=0;play
 function start(){reset();running=true;msg.style.display="none";sound("start");last=performance.now();requestAnimationFrame(loop)}
 function gameOver(){running=false;sound("crash");if(score>best){best=score;localStorage.setItem("street-best",best)}bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");msg.querySelector("h1").textContent="💥 بازی تمام شد";msg.querySelector("p").textContent="امتیاز شما: "+score.toLocaleString("fa-IR");msg.style.display="block"}
 function rect(x,y,w,h,r=8){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
-function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",highway:"#31552f"}[terrain];ctx.fillStyle=bg;ctx.fillRect(0,0,900,600);if(terrain==="desert"){for(let i=0;i<20;i++){ctx.fillStyle="#d7b878";ctx.fillRect((i*97+score)%900,((i*53+score*0.3)%600),3,3)}}else if(terrain==="forest"){ctx.fillStyle="#214722";for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*71)%160, (i*91)%600, 24,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(740+(i*53)%160,(i*67)%600,28,0,Math.PI*2);ctx.fill()}}else if(terrain==="city"){ctx.fillStyle="#555";for(let i=0;i<8;i++){ctx.fillRect(i*115,0,65,80+(i%3)*35);ctx.fillRect(i*115,520,65,80-(i%3)*15)}}ctx.fillStyle="#383b40";ctx.fillRect(road.x,0,road.w,600);ctx.fillStyle="#ddd";ctx.fillRect(road.x,0,7,600);ctx.fillRect(road.x+road.w-7,0,7,600);ctx.strokeStyle="#e9e2b6";ctx.lineWidth=7;ctx.setLineDash([35,35]);ctx.lineDashOffset=-(score*2%70);for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(road.x+road.w*i/4,0);ctx.lineTo(road.x+road.w*i/4,600);ctx.stroke()}ctx.setLineDash([])}
-function drawCar(c,x,y,w,h,isPlayer=false){if(isPlayer&&driveMode==="low"){h*=.86;w*=1.03;}
+function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",highway:"#31552f"}[terrain];ctx.fillStyle=bg;ctx.fillRect(0,0,900,600);if(terrain==="desert"){for(let i=0;i<20;i++){ctx.fillStyle="#d7b878";ctx.fillRect((i*97+score)%900,((i*53+score*0.3)%600),3,3)}}else if(terrain==="forest"){ctx.fillStyle="#214722";for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*71)%160, (i*91)%600, 24,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(740+(i*53)%160,(i*67)%600,28,0,Math.PI*2);ctx.fill()}}else if(terrain==="city"){ctx.fillStyle="#555";for(let i=0;i<8;i++){ctx.fillRect(i*115,0,65,80+(i%3)*35);ctx.fillRect(i*115,520,65,80-(i%3)*15)}}ctx.fillStyle="#292d33";ctx.fillRect(road.x,0,road.w,600);ctx.fillStyle="#555";ctx.fillRect(road.x+7,0,road.w-14,600);ctx.fillStyle="#ddd";ctx.fillRect(road.x,0,7,600);ctx.fillRect(road.x+road.w-7,0,7,600);ctx.strokeStyle="#e9e2b6";ctx.lineWidth=7;ctx.shadowBlur=0;ctx.setLineDash([35,35]);ctx.lineDashOffset=-(score*2%70);for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(road.x+road.w*i/4,0);ctx.lineTo(road.x+road.w*i/4,600);ctx.stroke()}ctx.setLineDash([])}
+function drawCar(c,x,y,w,h,isPlayer=false){ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=12;if(isPlayer&&driveMode==="low"){h*=.86;w*=1.03;}
   ctx.save();ctx.translate(x,y);
   // نمای کارتونی و غیرواقعی از پژو 405
   ctx.fillStyle=isPlayer?"#15171a":c;rect(-w/2,-h/2,w,h,8);
@@ -21,7 +21,7 @@ function drawCar(c,x,y,w,h,isPlayer=false){if(isPlayer&&driveMode==="low"){h*=.8
   ctx.fillStyle=lights&&isPlayer?"#fff":"#ddd";ctx.fillRect(-w*.39,-h*.43,10,7);ctx.fillRect(w*.25,-h*.43,10,7);
   ctx.fillStyle=isPlayer?"#d22":"#a22";ctx.fillRect(-w*.39,h*.38,10,7);ctx.fillRect(w*.25,h*.38,10,7);
   ctx.fillStyle="#333";ctx.fillRect(-w*.28,h*.27,w*.56,5);
-  ctx.restore();
+  ctx.restore();ctx.shadowBlur=0;
 }
 function spawnEnemy(){const lane=Math.floor(Math.random()*4);enemies.push({x:road.x+road.w*(lane+.5)/4,y:-80,w:52,h:86,c:["#e14b4b","#3f86d9","#f0a33a","#9b68d1"][Math.floor(Math.random()*4)]})}
 function collide(a,b){return Math.abs(a.x-b.x)<(a.w+b.w)*.42&&Math.abs(a.y-b.y)<(a.h+b.h)*.42}
