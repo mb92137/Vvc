@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>بتاز | بازی ماشینی</title><link rel="stylesheet" href="styles.css"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>بتاز | بازی ماشینی</title><link rel="stylesheet" href="styles.css"><link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#0b0d12"></head>
 <body>
 <div class="hud"><div><b>🏁 راننده خیابان</b><span id="score">امتیاز: ۰</span></div><div><span id="speed">سرعت: ۰</span><span id="best">رکورد: ۰</span><span id="level">مرحله: ۱</span></div></div>
 <main><canvas id="game" width="900" height="600"></canvas><section class="controls"><button id="start">شروع بازی</button><button id="pause">توقف</button><p>حرکت: ← → یا A/D &nbsp; | &nbsp; موبایل: دکمه‌های پایین</p></section></main><div id="levelToast" class="level-toast"></div>
 <div class="touch"><button data-key="ArrowRight">◀</button><button data-key="ArrowLeft">▶</button></div>
 <div id="message" class="message"><h1>بتاز</h1><p>از ماشین‌ها جاخالی بده و رکورد بزن!</p><button id="start2">شروع</button></div>
-<script src="app.js"></script></body></html>
+<script src="app.js"></script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js"));}</script></body></html>
