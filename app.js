@@ -1,6 +1,6 @@
 const canvas=document.getElementById("game"),ctx=canvas.getContext("2d"),map=document.getElementById("map"),mctx=map.getContext("2d");
 const scoreEl=document.getElementById("score"),speedEl=document.getElementById("speed"),bestEl=document.getElementById("best"),gearEl=document.getElementById("gear"),msg=document.getElementById("message");
-let running=false,paused=false,last=0,score=0,baseSpeed=220,speed=220,best=Number(localStorage.getItem("street-best")||0),
+let running=false,paused=false,last=0,score=0,baseSpeed=220,speed=220,best=Number(localStorage.getItem("street-best")||0);
 let player={x:450,y:500,w:58,h:96},enemies=[],spawn=0,keys={},gas=false,brake=false,lights=false,audio;let terrain="highway",driveMode="normal",pedestrians=[];
 bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");
 const road={x:170,w:560};
