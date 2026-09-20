@@ -12,25 +12,42 @@ function gameOver(){running=false;sound("crash");if(score>best){best=score;local
 function rect(x,y,w,h,r=8){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
 function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",highway:"#31552f"}[terrain];ctx.fillStyle=bg;ctx.fillRect(0,0,900,600);ctx.globalAlpha=.22;ctx.fillStyle="#fff";for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*83+score*.35)%900,(i*137+score*.18)%600,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;if(terrain==="desert"){for(let i=0;i<20;i++){ctx.fillStyle="#d7b878";ctx.fillRect((i*97+score)%900,((i*53+score*0.3)%600),3,3)}}else if(terrain==="forest"){ctx.fillStyle="#214722";for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*71)%160,(i*91)%600,24,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(740+(i*53)%160,(i*67)%600,28,0,Math.PI*2);ctx.fill()}}else if(terrain==="city"){ctx.fillStyle="#555";for(let i=0;i<8;i++){ctx.fillRect(i*115,0,65,80+(i%3)*35);ctx.fillRect(i*115,520,65,80-(i%3)*15)}ctx.fillStyle="#777";ctx.fillRect(0,95,road.x-12,410);ctx.fillRect(road.x+road.w+12,95,900-road.x-road.w-12,410);ctx.fillStyle="#ddd";ctx.fillRect(0,108,road.x-12,3);ctx.fillRect(road.x+road.w+12,108,900-road.x-road.w-12,3);ctx.fillStyle="#bbb";for(let y=130;y<500;y+=45){ctx.fillRect(25,y,80,4);ctx.fillRect(road.x+road.w+30,y,80,4)}}ctx.fillStyle="#171a1f";ctx.fillRect(road.x,0,road.w,600);ctx.fillStyle="#353a41";ctx.fillRect(road.x+8,0,road.w-16,600);ctx.fillStyle="#aaa";ctx.fillRect(road.x+8,0,5,600);ctx.fillRect(road.x+road.w-13,0,5,600);ctx.fillStyle="#555";ctx.fillRect(road.x+7,0,road.w-14,600);ctx.fillStyle="#ddd";ctx.fillRect(road.x,0,7,600);ctx.fillRect(road.x+road.w-7,0,7,600);ctx.strokeStyle="#e9e2b6";ctx.lineWidth=7;ctx.shadowBlur=0;ctx.setLineDash([35,35]);ctx.lineDashOffset=-(score*2%70);for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(road.x+road.w*i/4,0);ctx.lineTo(road.x+road.w*i/4,600);ctx.stroke()}ctx.setLineDash([])}
 function drawCar(c,x,y,w,h,isPlayer=false){
-  ctx.save();ctx.translate(x,y);ctx.shadowColor="rgba(0,0,0,.55)";ctx.shadowBlur=14;
-  if(isPlayer&&driveMode==="low"){h*=.84;w*=1.06;}
-  // بدنه اسپرت: سپر تهاجمی، رکاب، اسپویلر عقب، رینگ و نوار مسابقه
-  ctx.fillStyle=isPlayer?"#080a0d":c;rect(-w/2,-h/2,w,h,12);
-  ctx.fillStyle=isPlayer?"#151922":"#252b33";rect(-w*.47,-h*.42,w*.94,h*.10,6);
-  ctx.fillStyle="#172631";rect(-w*.37,-h*.27,w*.74,h*.23,6);
-  ctx.fillStyle="#263e4c";rect(-w*.31,-h*.23,w*.26,h*.15,4);ctx.fillStyle="#263e4c";rect(w*.05,-h*.23,w*.26,h*.15,4);
-  ctx.fillStyle=isPlayer?"#1b1f27":"#333";rect(-w*.40,h*.02,w*.80,h*.20,6);
-  ctx.fillStyle=isPlayer?"#e52b35":"#c7c7c7";ctx.fillRect(-w*.045,-h*.48,w*.09,h*.96);
-  ctx.fillStyle=isPlayer?"#f2d54a":"#ddd";ctx.fillRect(-w*.40,-h*.02,w*.80,3);
-  // اسپویلر
-  ctx.fillStyle="#0a0b0d";ctx.fillRect(-w*.43,h*.40,w*.86,6);ctx.fillRect(-w*.34,h*.34,w*.07,9);ctx.fillRect(w*.27,h*.34,w*.07,9);
-  // سپر جلو و دیفیوزر
-  ctx.fillStyle="#0b0c0f";rect(-w*.43,-h*.49,w*.86,h*.055,3);rect(-w*.40,h*.45,w*.80,h*.05,3);
-  // چرخ‌های پهن
-  ctx.fillStyle="#050505";ctx.fillRect(-w/2-6,-h*.27,9,25);ctx.fillRect(w/2-3,-h*.27,9,25);ctx.fillRect(-w/2-6,h*.14,9,25);ctx.fillRect(w/2-3,h*.14,9,25);
-  ctx.fillStyle="#aaa";ctx.beginPath();ctx.arc(-w/2-2,-h*.15,4,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(w/2+2,-h*.15,4,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=lights&&isPlayer?"#fff":"#ddd";ctx.shadowColor=lights&&isPlayer?"#fff":"transparent";ctx.shadowBlur=lights&&isPlayer?18:0;ctx.fillRect(-w*.39,-h*.43,10,7);ctx.fillRect(w*.25,-h*.43,10,7);
-  ctx.shadowBlur=0;ctx.fillStyle=isPlayer?"#ff2635":"#a22";ctx.fillRect(-w*.39,h*.38,10,7);ctx.fillRect(w*.25,h*.38,10,7);
+  ctx.save();ctx.translate(x,y);
+  if(isPlayer&&driveMode==="low"){h*=.9;w*=1.03;}
+  // نمای ماشین معمولی و قابل تشخیص؛ بدون ظاهر اسپرت
+  ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=10;
+  ctx.fillStyle=isPlayer?"#111318":c;rect(-w/2,-h/2,w,h,10);
+  // کاپوت و صندوق
+  ctx.fillStyle=isPlayer?"#1b1e24":"#333941";rect(-w*.43,-h*.43,w*.86,h*.20,6);
+  ctx.fillStyle=isPlayer?"#16191f":"#2d3239";rect(-w*.43,h*.23,w*.86,h*.20,6);
+  // کابین و شیشه‌ها
+  ctx.fillStyle="#182832";rect(-w*.36,-h*.20,w*.72,h*.43,8);
+  ctx.fillStyle="#314a59";rect(-w*.30,-h*.16,w*.25,h*.30,4);
+  ctx.fillStyle="#314a59";rect(w*.05,-h*.16,w*.25,h*.30,4);
+  ctx.fillStyle="#223742";rect(-w*.30,h*.02,w*.60,h*.16,3);
+  // ستون‌های بدنه
+  ctx.fillStyle=isPlayer?"#090b0f":"#20252b";ctx.fillRect(-w*.035,-h*.20,w*.07,h*.42);
+  // سپرها
+  ctx.fillStyle="#0a0c10";rect(-w*.42,-h*.49,w*.84,h*.055,3);rect(-w*.42,h*.435,w*.84,h*.055,3);
+  // چرخ‌های واقعی‌تر
+  const wheelY1=-h*.30,wheelY2=h*.29;
+  for(const wy of [wheelY1,wheelY2]){
+    for(const wx of [-w*.49,w*.49]){
+      ctx.fillStyle="#050505";ctx.beginPath();ctx.ellipse(wx,wy,6,13,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle="#777";ctx.beginPath();ctx.arc(wx,wy,3.2,0,Math.PI*2);ctx.fill();
+    }
+  }
+  // چراغ‌های جلو و عقب
+  ctx.fillStyle=lights&&isPlayer?"#fff":"#f1e7c2";ctx.shadowColor=lights&&isPlayer?"#fff":"transparent";ctx.shadowBlur=lights&&isPlayer?14:0;
+  rect(-w*.36,-h*.445,w*.18,h*.055,3);rect(w*.18,-h*.445,w*.18,h*.055,3);
+  ctx.shadowBlur=0;ctx.fillStyle=isPlayer?"#e52d35":"#b72d35";
+  rect(-w*.36,h*.39,w*.18,h*.055,3);rect(w*.18,h*.39,w*.18,h*.055,3);
+  // آینه‌های بغل
+  ctx.fillStyle="#0b0d10";ctx.beginPath();ctx.ellipse(-w*.51,-h*.08,5,8,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(w*.51,-h*.08,5,8,0,0,Math.PI*2);ctx.fill();
+  // جلوپنجره
+  ctx.fillStyle="#080a0d";rect(-w*.28,-h*.495,w*.56,h*.045,2);
+  ctx.fillStyle=isPlayer?"#bbb":"#999";ctx.fillRect(-2,-h*.49,4,h*.035);
   ctx.restore();ctx.shadowBlur=0;
 }
 function spawnPedestrian(){const side=Math.random()<.5?0:1;pedestrians.push({x:side?road.x+road.w+45:road.x-45,y:Math.random()*600,dir:side?-1:1,s:35+Math.random()*35,c:["#f2c7a5","#d88","#8cf","#fdc"].at(Math.floor(Math.random()*4))})}
