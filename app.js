@@ -12,6 +12,28 @@ function reset(){pedestrians=[];score=0;scoreTime=0;baseSpeed=220;speed=220;leve
 function start(){reset();running=true;msg.style.display="none";sound("start");last=performance.now();requestAnimationFrame(loop)}
 function gameOver(){running=false;sound("crash");saveBest();try{localStorage.setItem("street-last-score",String(score))}catch(e){}msg.querySelector("h1").textContent="💥 بازی تمام شد";msg.querySelector("p").textContent="امتیاز شما: "+score.toLocaleString("fa-IR");msg.style.display="block"}
 function rect(x,y,w,h,r=8){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
+function drawRoadDetails(){
+  ctx.save();
+  // roadside posts and reflectors
+  for(let y=40;y<600;y+=70){
+    const yy=(y+score*3)%670-70;
+    ctx.fillStyle="#eee";ctx.fillRect(road.x-28,yy,6,24);ctx.fillRect(road.x+road.w+22,yy,6,24);
+    ctx.fillStyle="#e33";ctx.fillRect(road.x-28,yy,6,6);ctx.fillRect(road.x+road.w+22,yy,6,6);
+  }
+  // road surface patches
+  ctx.globalAlpha=.16;ctx.fillStyle="#fff";
+  for(let i=0;i<10;i++){const yy=(i*83+score*4)%650-50;ctx.fillRect(road.x+25+(i%4)*135,yy,45,3)}
+  ctx.globalAlpha=1;
+  // roadside trees/buildings depending on terrain
+  if(terrain==="forest"){
+    for(let i=0;i<9;i++){const yy=(i*97+score*2.2)%700-80;for(const sx of [road.x-65,road.x+road.w+55]){ctx.fillStyle="#5a3820";ctx.fillRect(sx-4,yy,8,35);ctx.fillStyle="#1d6b2a";ctx.beginPath();ctx.arc(sx,yy-5,20,0,Math.PI*2);ctx.fill()}}
+  }else if(terrain==="city"){
+    for(let i=0;i<7;i++){const yy=(i*105+score*2.5)%700-90;for(const sx of [25,road.x+road.w+35]){ctx.fillStyle="#3a4048";ctx.fillRect(sx,yy,80,55);ctx.fillStyle="#f6d76a";for(let w=0;w<3;w++)ctx.fillRect(sx+12+w*20,yy+12,8,10)}}
+  }else if(terrain==="desert"){
+    ctx.fillStyle="#8d6a39";for(let i=0;i<10;i++){const yy=(i*111+score*1.8)%680-60;ctx.beginPath();ctx.arc(i%2?road.x-55:road.x+road.w+55,yy,14,0,Math.PI*2);ctx.fill()}
+  }
+  ctx.restore();
+}
 function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",highway:"#31552f"}[terrain];ctx.fillStyle=bg;ctx.fillRect(0,0,900,600);ctx.globalAlpha=.22;ctx.fillStyle="#fff";for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*83+score*.35)%900,(i*137+score*.18)%600,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;if(terrain==="desert"){for(let i=0;i<20;i++){ctx.fillStyle="#d7b878";ctx.fillRect((i*97+score)%900,((i*53+score*0.3)%600),3,3)}}else if(terrain==="forest"){ctx.fillStyle="#214722";for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*71)%160,(i*91)%600,24,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(740+(i*53)%160,(i*67)%600,28,0,Math.PI*2);ctx.fill()}}else if(terrain==="city"){ctx.fillStyle="#555";for(let i=0;i<8;i++){ctx.fillRect(i*115,0,65,80+(i%3)*35);ctx.fillRect(i*115,520,65,80-(i%3)*15)}ctx.fillStyle="#777";ctx.fillRect(0,95,road.x-12,410);ctx.fillRect(road.x+road.w+12,95,900-road.x-road.w-12,410);ctx.fillStyle="#ddd";ctx.fillRect(0,108,road.x-12,3);ctx.fillRect(road.x+road.w+12,108,900-road.x-road.w-12,3);ctx.fillStyle="#bbb";for(let y=130;y<500;y+=45){ctx.fillRect(25,y,80,4);ctx.fillRect(road.x+road.w+30,y,80,4)}}ctx.fillStyle="#171a1f";ctx.fillRect(road.x,0,road.w,600);ctx.fillStyle="#353a41";ctx.fillRect(road.x+8,0,road.w-16,600);ctx.fillStyle="#aaa";ctx.fillRect(road.x+8,0,5,600);ctx.fillRect(road.x+road.w-13,0,5,600);ctx.fillStyle="#555";ctx.fillRect(road.x+7,0,road.w-14,600);ctx.fillStyle="#ddd";ctx.fillRect(road.x,0,7,600);ctx.fillRect(road.x+road.w-7,0,7,600);ctx.strokeStyle="#e9e2b6";ctx.lineWidth=7;ctx.shadowBlur=0;ctx.setLineDash([35,35]);ctx.lineDashOffset=-(score*2%70);for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(road.x+road.w*i/4,0);ctx.lineTo(road.x+road.w*i/4,600);ctx.stroke()}ctx.setLineDash([])}
 function drawCar(c,x,y,w,h,isPlayer=false){ctx.save();ctx.translate(x,y);if(isPlayer&&driveMode==="low"){h*=.9;w*=1.03}const body=isPlayer?"#1769aa":c;ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=10;ctx.fillStyle=body;ctx.beginPath();ctx.moveTo(-w*.46,h*.45);ctx.lineTo(-w*.49,h*.20);ctx.lineTo(-w*.42,-h*.28);ctx.lineTo(-w*.28,-h*.46);ctx.lineTo(w*.28,-h*.46);ctx.lineTo(w*.42,-h*.28);ctx.lineTo(w*.49,h*.20);ctx.lineTo(w*.46,h*.45);ctx.quadraticCurveTo(0,h*.52,-w*.46,h*.45);ctx.fill();ctx.fillStyle="#172b3a";ctx.beginPath();ctx.moveTo(-w*.29,-h*.27);ctx.lineTo(-w*.20,-h*.40);ctx.lineTo(w*.20,-h*.40);ctx.lineTo(w*.29,-h*.27);ctx.lineTo(w*.24,h*.02);ctx.lineTo(-w*.24,h*.02);ctx.closePath();ctx.fill();ctx.fillStyle="#416579";ctx.fillRect(-w*.19,-h*.35,w*.15,h*.22);ctx.fillRect(w*.04,-h*.35,w*.15,h*.22);ctx.fillStyle="#223c4b";ctx.fillRect(-w*.025,-h*.35,w*.05,h*.37);ctx.fillStyle="rgba(255,255,255,.10)";ctx.fillRect(-w*.37,h*.03,w*.74,h*.08);ctx.fillStyle="rgba(0,0,0,.16)";ctx.fillRect(-w*.39,h*.28,w*.78,h*.10);ctx.fillStyle="#11151a";ctx.fillRect(-w*.25,-h*.475,w*.50,h*.055);ctx.fillStyle=lights&&isPlayer?"#fff":"#f4e6b5";ctx.shadowColor=lights&&isPlayer?"#fff":"transparent";ctx.shadowBlur=lights&&isPlayer?12:0;ctx.fillRect(-w*.35,-h*.43,w*.19,h*.065);ctx.fillRect(w*.16,-h*.43,w*.19,h*.065);ctx.shadowBlur=0;ctx.fillStyle=isPlayer?"#e52b32":"#b72d35";ctx.fillRect(-w*.36,h*.36,w*.20,h*.065);ctx.fillRect(w*.16,h*.36,w*.20,h*.065);ctx.fillStyle="#0b0d10";ctx.fillRect(-w*.40,h*.43,w*.80,h*.055);for(const wy of [-h*.27,h*.28])for(const wx of [-w*.49,w*.49]){ctx.fillStyle="#050505";ctx.beginPath();ctx.ellipse(wx,wy,6,13,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#888";ctx.beginPath();ctx.arc(wx,wy,3.2,0,Math.PI*2);ctx.fill()}ctx.fillStyle="#0b0d10";ctx.beginPath();ctx.ellipse(-w*.51,-h*.08,5,8,0,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.ellipse(w*.51,-h*.08,5,8,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#d9d9d9";ctx.font="bold 8px sans-serif";ctx.textAlign="center";ctx.fillText(isPlayer?"P":"",0,h*.30);ctx.restore();ctx.shadowBlur=0}
 function spawnPedestrian(){const side=Math.random()<.5?0:1;pedestrians.push({x:side?road.x+road.w+45:road.x-45,y:Math.random()*600,dir:side?-1:1,s:35+Math.random()*35,c:["#f2c7a5","#d88","#8cf","#fdc"].at(Math.floor(Math.random()*4))})}
@@ -24,7 +46,7 @@ function loop(t){if(!running)return;requestAnimationFrame(loop);if(paused){last=
   scoreTime+=dt;
   if(scoreTime>=1){const whole=Math.floor(scoreTime);score+=whole;scoreTime-=whole;saveBest();updateUI()}
   if(score>0&&score%50===0){document.getElementById("levelToast").textContent="🏁 رکورد جدید!";document.getElementById("levelToast").classList.add("show");setTimeout(()=>document.getElementById("levelToast").classList.remove("show"),500)}
-  baseSpeed=220;updateUI();drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
+  baseSpeed=220;updateUI();drawRoad();drawRoadDetails();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
 document.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key===" "&&running)paused=!paused;if(e.key.toLowerCase()==="h")horn()});
 document.addEventListener("keyup",e=>keys[e.key]=false);
 function hold(id,setter){const b=document.getElementById(id);["pointerdown","touchstart"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(true)}));["pointerup","pointercancel","pointerleave","touchend"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(false)}))}
@@ -32,6 +54,6 @@ hold("gas",v=>{gas=v;updateUI()});hold("brake",v=>{brake=v;if(v)sound("brake");u
 function horn(){sound("horn");document.getElementById("hornState").textContent="📯 بوق!";setTimeout(()=>document.getElementById("hornState").textContent="",500)}
 document.getElementById("horn").onclick=horn;document.getElementById("lights").onclick=()=>{lights=!lights;updateUI()};
 document.querySelectorAll(".steering button").forEach(b=>{b.addEventListener("pointerdown",()=>keys[b.dataset.key]=true);b.addEventListener("pointerup",()=>keys[b.dataset.key]=false);b.addEventListener("pointerleave",()=>keys[b.dataset.key]=false)});
-document.getElementById("start").onclick=start;document.getElementById("start2").onclick=start;document.getElementById("pause").onclick=()=>{if(running)paused=!paused};drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);drawMap();updateUI();
+document.getElementById("start").onclick=start;document.getElementById("start2").onclick=start;document.getElementById("pause").onclick=()=>{if(running)paused=!paused};drawRoad();drawRoadDetails();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);drawMap();updateUI();
 document.querySelectorAll("#terrainMenu button").forEach(b=>b.addEventListener("click",()=>{terrain=b.dataset.terrain;document.getElementById("terrainMenu").style.display="none";drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);drawMap()}));
 document.getElementById("stance").style.display="none";
