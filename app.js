@@ -47,6 +47,18 @@ function drawRoadDetails(){
   ctx.restore();
 }
 function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",highway:"#31552f"}[terrain];ctx.fillStyle=bg;ctx.fillRect(0,0,900,600);ctx.globalAlpha=.22;ctx.fillStyle="#fff";for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*83+score*.35)%900,(i*137+score*.18)%600,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;if(terrain==="desert"){for(let i=0;i<20;i++){ctx.fillStyle="#d7b878";ctx.fillRect((i*97+score)%900,((i*53+score*0.3)%600),3,3)}}else if(terrain==="forest"){ctx.fillStyle="#214722";for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*71)%160,(i*91)%600,24,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(740+(i*53)%160,(i*67)%600,28,0,Math.PI*2);ctx.fill()}}else if(terrain==="city"){ctx.fillStyle="#555";for(let i=0;i<8;i++){ctx.fillRect(i*115,0,65,80+(i%3)*35);ctx.fillRect(i*115,520,65,80-(i%3)*15)}ctx.fillStyle="#777";ctx.fillRect(0,95,road.x-12,410);ctx.fillRect(road.x+road.w+12,95,900-road.x-road.w-12,410);ctx.fillStyle="#ddd";ctx.fillRect(0,108,road.x-12,3);ctx.fillRect(road.x+road.w+12,108,900-road.x-road.w-12,3);ctx.fillStyle="#bbb";for(let y=130;y<500;y+=45){ctx.fillRect(25,y,80,4);ctx.fillRect(road.x+road.w+30,y,80,4)}}ctx.fillStyle="#171a1f";ctx.fillRect(road.x,0,road.w,600);ctx.fillStyle="#353a41";ctx.fillRect(road.x+8,0,road.w-16,600);ctx.fillStyle="#aaa";ctx.fillRect(road.x+8,0,5,600);ctx.fillRect(road.x+road.w-13,0,5,600);ctx.fillStyle="#555";ctx.fillRect(road.x+7,0,road.w-14,600);ctx.fillStyle="#ddd";ctx.fillRect(road.x,0,7,600);ctx.fillRect(road.x+road.w-7,0,7,600);ctx.strokeStyle="#e9e2b6";ctx.lineWidth=7;ctx.shadowBlur=0;ctx.setLineDash([35,35]);ctx.lineDashOffset=-(score*2%70);for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(road.x+road.w*i/4,0);ctx.lineTo(road.x+road.w*i/4,600);ctx.stroke()}ctx.setLineDash([])}
+function drawAdvancedEffects(){
+  ctx.save();
+  // atmospheric horizon bands
+  const h=ctx.createLinearGradient(0,80,0,330);h.addColorStop(0,"rgba(255,255,255,.10)");h.addColorStop(.55,"rgba(255,255,255,.025)");h.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=h;ctx.fillRect(0,70,900,260);
+  // lane-side rumble strips
+  ctx.globalAlpha=.5;ctx.fillStyle="#f2f2f2";for(let y=-20;y<620;y+=34){const yy=(y+score*3)%680-40;ctx.fillRect(road.x+16,yy,18,4);ctx.fillRect(road.x+road.w-34,yy,18,4)}
+  // speed glow around player
+  if(speed>300){ctx.globalAlpha=Math.min(.16,(speed-300)/900);ctx.strokeStyle="#8eeaff";ctx.lineWidth=3;ctx.beginPath();ctx.arc(player.x,player.y,75+(speed-300)*.08,0,Math.PI*2);ctx.stroke()}
+  // windshield-like highlight on player car
+  ctx.globalAlpha=.12;ctx.fillStyle="#fff";ctx.beginPath();ctx.ellipse(player.x-10,player.y-22,14,30,-.2,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;ctx.restore();
+}
 function drawQualityEffects(){
   ctx.save();
   // subtle motion streaks for speed
@@ -81,7 +93,7 @@ function loop(t){if(!running)return;requestAnimationFrame(loop);if(paused){last=
   scoreTime+=dt;
   if(scoreTime>=1){const whole=Math.floor(scoreTime);score+=whole;scoreTime-=whole;saveBest();updateUI()}
   if(score>0&&score%50===0){document.getElementById("levelToast").textContent="🏁 رکورد جدید!";document.getElementById("levelToast").classList.add("show");setTimeout(()=>document.getElementById("levelToast").classList.remove("show"),500)}
-  baseSpeed=220;updateUI();drawRoad();drawRoadDetails();drawExtraDetails();drawQualityEffects();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
+  baseSpeed=220;updateUI();drawRoad();drawRoadDetails();drawExtraDetails();drawQualityEffects();drawAdvancedEffects();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
 document.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key===" "&&running)paused=!paused;if(e.key.toLowerCase()==="h")horn()});
 document.addEventListener("keyup",e=>keys[e.key]=false);
 function hold(id,setter){const b=document.getElementById(id);["pointerdown","touchstart"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(true)}));["pointerup","pointercancel","pointerleave","touchend"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(false)}))}
