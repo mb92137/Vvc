@@ -1,4 +1,16 @@
 const canvas=document.getElementById("game"),ctx=canvas.getContext("2d"),map=document.getElementById("map"),mctx=map.getContext("2d");
+function setupCanvasQuality(){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const cssW=canvas.clientWidth||900,cssH=canvas.clientHeight||600;
+  canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.imageSmoothingEnabled=true;
+  const mdpr=Math.min(window.devicePixelRatio||1,2);
+  const mw=map.clientWidth||120,mh=map.clientHeight||160;
+  map.width=Math.round(mw*mdpr);map.height=Math.round(mh*mdpr);
+  mctx.setTransform(mdpr,0,0,mdpr,0,0);mctx.imageSmoothingEnabled=true;
+}
+setupCanvasQuality();
+window.addEventListener("resize",setupCanvasQuality);
 const scoreEl=document.getElementById("score"),speedEl=document.getElementById("speed"),bestEl=document.getElementById("best"),gearEl=document.getElementById("gear"),msg=document.getElementById("message");
 let running=false,paused=false,last=0,score=0,scoreTime=0,baseSpeed=220,speed=220,best=0;
 try{best=Number(localStorage.getItem("street-best")||0)||0}catch(e){best=0}
