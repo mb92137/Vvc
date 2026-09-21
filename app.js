@@ -8,7 +8,7 @@ bestEl.textContent="رکورد: "+best.toLocaleString("fa-IR");
 const road={x:170,w:560};
 function sound(type){try{audio??=new AudioContext();const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);const f=type==="horn"?180:type==="crash"?70:type==="brake"?120:700;o.frequency.value=f;g.gain.value=type==="horn"?0.12:.05;o.start();o.stop(audio.currentTime+(type==="horn"?0.3:.12))}catch(e){}}
 function engineSound(){if(!audio)return;try{const o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);o.type="sawtooth";o.frequency.value=70+speed*.55;g.gain.value=.018;o.start();o.stop(audio.currentTime+.07)}catch(e){}}
-function reset(){pedestrians=[];score=0;scoreTime=0;baseSpeed=220;speed=220;level=1;enemies=[];spawn=0;player.x=450;paused=false;gas=false;brake=false;updateUI()}
+function reset(){pedestrians=[];score=0;scoreTime=0;baseSpeed=220;speed=220;level=1;enemies=[];spawn=0;player.x=450;paused=false;gas=false;brake=false;driveMode="normal";updateUI()}
 function start(){reset();running=true;msg.style.display="none";sound("start");last=performance.now();requestAnimationFrame(loop)}
 function gameOver(){running=false;sound("crash");saveBest();try{localStorage.setItem("street-last-score",String(score))}catch(e){}msg.querySelector("h1").textContent="💥 بازی تمام شد";msg.querySelector("p").textContent="امتیاز شما: "+score.toLocaleString("fa-IR");msg.style.display="block"}
 function rect(x,y,w,h,r=8){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
@@ -34,4 +34,4 @@ document.getElementById("horn").onclick=horn;document.getElementById("lights").o
 document.querySelectorAll(".steering button").forEach(b=>{b.addEventListener("pointerdown",()=>keys[b.dataset.key]=true);b.addEventListener("pointerup",()=>keys[b.dataset.key]=false);b.addEventListener("pointerleave",()=>keys[b.dataset.key]=false)});
 document.getElementById("start").onclick=start;document.getElementById("start2").onclick=start;document.getElementById("pause").onclick=()=>{if(running)paused=!paused};drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);drawMap();updateUI();
 document.querySelectorAll("#terrainMenu button").forEach(b=>b.addEventListener("click",()=>{terrain=b.dataset.terrain;document.getElementById("terrainMenu").style.display="none";drawRoad();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);drawMap()}));
-document.getElementById("stance").onclick=()=>{driveMode=driveMode==="normal"?"low":driveMode==="low"?"shoti":"normal";const names={normal:"🚗 حالت: عادی",low:"⬇️ حالت: کف‌خواب",shoti:"🏎️ حالت: شوتی"};document.getElementById("stance").textContent=names[driveMode];drawRoad();drawCar("#15171a",player.x,player.y,player.w,player.h,true)};
+document.getElementById("stance").style.display="none";
