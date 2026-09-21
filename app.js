@@ -47,6 +47,22 @@ function drawRoadDetails(){
   ctx.restore();
 }
 function drawRoad(){const bg={desert:"#c89b58",forest:"#31552f",city:"#252a31",highway:"#31552f"}[terrain];ctx.fillStyle=bg;ctx.fillRect(0,0,900,600);ctx.globalAlpha=.22;ctx.fillStyle="#fff";for(let i=0;i<12;i++){ctx.beginPath();ctx.arc((i*83+score*.35)%900,(i*137+score*.18)%600,2+(i%3),0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;if(terrain==="desert"){for(let i=0;i<20;i++){ctx.fillStyle="#d7b878";ctx.fillRect((i*97+score)%900,((i*53+score*0.3)%600),3,3)}}else if(terrain==="forest"){ctx.fillStyle="#214722";for(let i=0;i<18;i++){ctx.beginPath();ctx.arc((i*71)%160,(i*91)%600,24,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(740+(i*53)%160,(i*67)%600,28,0,Math.PI*2);ctx.fill()}}else if(terrain==="city"){ctx.fillStyle="#555";for(let i=0;i<8;i++){ctx.fillRect(i*115,0,65,80+(i%3)*35);ctx.fillRect(i*115,520,65,80-(i%3)*15)}ctx.fillStyle="#777";ctx.fillRect(0,95,road.x-12,410);ctx.fillRect(road.x+road.w+12,95,900-road.x-road.w-12,410);ctx.fillStyle="#ddd";ctx.fillRect(0,108,road.x-12,3);ctx.fillRect(road.x+road.w+12,108,900-road.x-road.w-12,3);ctx.fillStyle="#bbb";for(let y=130;y<500;y+=45){ctx.fillRect(25,y,80,4);ctx.fillRect(road.x+road.w+30,y,80,4)}}ctx.fillStyle="#171a1f";ctx.fillRect(road.x,0,road.w,600);ctx.fillStyle="#353a41";ctx.fillRect(road.x+8,0,road.w-16,600);ctx.fillStyle="#aaa";ctx.fillRect(road.x+8,0,5,600);ctx.fillRect(road.x+road.w-13,0,5,600);ctx.fillStyle="#555";ctx.fillRect(road.x+7,0,road.w-14,600);ctx.fillStyle="#ddd";ctx.fillRect(road.x,0,7,600);ctx.fillRect(road.x+road.w-7,0,7,600);ctx.strokeStyle="#e9e2b6";ctx.lineWidth=7;ctx.shadowBlur=0;ctx.setLineDash([35,35]);ctx.lineDashOffset=-(score*2%70);for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(road.x+road.w*i/4,0);ctx.lineTo(road.x+road.w*i/4,600);ctx.stroke()}ctx.setLineDash([])}
+function drawCarDetailFX(){
+  ctx.save();
+  const t=performance.now();
+  // metallic highlight and glass reflection on the player sedan
+  ctx.globalAlpha=.18;ctx.fillStyle="#fff";
+  ctx.beginPath();ctx.ellipse(player.x-6,player.y-22,7,25,-.22,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=.12;ctx.fillStyle="#bfe7ff";
+  ctx.beginPath();ctx.roundRect(player.x-18,player.y-37,36,13,4);ctx.fill();
+  // road contact shadow
+  ctx.globalAlpha=.16;ctx.fillStyle="#000";
+  ctx.beginPath();ctx.ellipse(player.x,player.y+29,28,7,0,0,Math.PI*2);ctx.fill();
+  // subtle wheel motion highlights
+  ctx.globalAlpha=.25;ctx.strokeStyle="#fff";ctx.lineWidth=1;
+  for(const dx of [-16,16]){ctx.beginPath();ctx.arc(player.x+dx,player.y+20,5,0,t*.004% (Math.PI*2));ctx.stroke()}
+  ctx.globalAlpha=1;ctx.restore();
+}
 function drawCarLightsFX(){
   ctx.save();
   const t=performance.now();
@@ -282,7 +298,7 @@ function loop(t){if(!running)return;requestAnimationFrame(loop);if(paused){last=
   scoreTime+=dt;
   if(scoreTime>=1){const whole=Math.floor(scoreTime);score+=whole;scoreTime-=whole;saveBest();updateUI()}
   if(score>0&&score%50===0){document.getElementById("levelToast").textContent="🏁 رکورد جدید!";document.getElementById("levelToast").classList.add("show");setTimeout(()=>document.getElementById("levelToast").classList.remove("show"),500)}
-  baseSpeed=220;updateUI();drawRoad();drawRoadDetails();drawExtraDetails();drawWorldDetails();drawTrafficDetails();drawEnvironmentExtras();drawQualityEffects();drawHighQualityLighting();drawUltraEffects();drawCinematicEffects();drawPremiumRoadFX();drawNextGenScene();drawRainAndWetRoad();drawCarLightsFX();drawAdvancedEffects();drawPremiumEffects();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
+  baseSpeed=220;updateUI();drawRoad();drawRoadDetails();drawExtraDetails();drawWorldDetails();drawTrafficDetails();drawEnvironmentExtras();drawQualityEffects();drawHighQualityLighting();drawUltraEffects();drawCinematicEffects();drawPremiumRoadFX();drawNextGenScene();drawRainAndWetRoad();drawCarLightsFX();drawCarDetailFX();drawAdvancedEffects();drawPremiumEffects();drawCar("#f3f5f7",player.x,player.y,player.w,player.h,true);enemies.forEach(e=>drawCar(e.c,e.x,e.y,e.w,e.h));if(terrain==="city")pedestrians.forEach(drawPedestrian);drawMap()}
 document.addEventListener("keydown",e=>{keys[e.key]=true;if(["ArrowLeft","ArrowRight"," "].includes(e.key))e.preventDefault();if(e.key===" "&&running)paused=!paused;if(e.key.toLowerCase()==="h")horn()});
 document.addEventListener("keyup",e=>keys[e.key]=false);
 function hold(id,setter){const b=document.getElementById(id);["pointerdown","touchstart"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(true)}));["pointerup","pointercancel","pointerleave","touchend"].forEach(ev=>b.addEventListener(ev,e=>{e.preventDefault();setter(false)}))}
