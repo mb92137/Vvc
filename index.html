@@ -1,6 +1,18 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>بتاز | بازی ماشینی</title><link rel="stylesheet" href="styles.css"><link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#0b0d12"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>بتاز | بازی ماشینی</title><link rel="stylesheet" href="styles.css"><link rel="manifest" href="./manifest.json"><meta name="theme-color" content="#0b0d12"><style>
+html,body,button,span,b,h1,h2,p,canvas{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+</style>
+<script>
+document.addEventListener("copy",e=>e.preventDefault());
+document.addEventListener("cut",e=>e.preventDefault());
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("selectstart",e=>e.preventDefault());
+document.addEventListener("dragstart",e=>e.preventDefault());
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&["c","x","a"].includes(e.key.toLowerCase())) e.preventDefault();
+});
+</script></head>
 <body>
 <div class="hud"><div><b>🏁 بتاز | رالی</b><span id="score">امتیاز: ۰</span></div><div><span id="speed">سرعت: ۰</span><span id="best">رکورد: ۰</span><span id="gear">دنده: N</span></div></div>
 <div id="terrainMenu" class="terrain-menu"><h2>انتخاب مسیر</h2><button data-terrain="desert">🏜️ صحرا</button><button data-terrain="forest">🌲 جنگل</button><button data-terrain="city">🏙️ شهر</button><button data-terrain="highway">🛣️ جاده</button></div><main><canvas id="game" width="900" height="600"></canvas><section class="controls"><button id="start">شروع بازی</button><button id="pause">توقف</button><div class="car-controls"><button id="brake">🛑 ترمز</button><button id="gas">⛽ گاز</button><button id="horn">📯 بوق</button><button id="lights">💡 چراغ</button><button id="stance">🚗 حالت: عادی</button></div><div class="steering"><span>فرمون دستی</span><button data-key="ArrowRight">◀</button><div class="wheel">◉</div><button data-key="ArrowLeft">▶</button></div><p>فرمون: ← → یا دکمه‌های دستی | گاز و ترمز را نگه دار</p></section></main><div id="levelToast" class="level-toast"></div>
